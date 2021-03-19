@@ -4,7 +4,6 @@ $(document).on("scroll", ()=>{
     if (educationOpacityFunctionality){
         updateEducationContents();
     }
-    updateUWLogo();
     updateArrowVisibility();
 });
 
@@ -20,18 +19,6 @@ $( window ).resize(function() {
     }
 });
 
-function updateUWLogo(){
-    var a = 400 - ($(document).scrollTop() / 3);
-    if (a < 250){
-        a = 250;
-    }
-    if (a > 350){
-        a = 350;
-    }
-    $("#uw-logo").width(a * 1.3);
-    $("#uw-logo").height(a);
-}
-
 function updateArrowVisibility(){
     var arrowScroll = 400 - $(document).scrollTop();
     if (arrowScroll < 0){
@@ -44,8 +31,8 @@ function updateEducationContents(){
     var p = $(document).scrollTop();
     var educationElement = getEducationElement();
 
-    if (p > 500){
-        p = 500;
+    if (p > 570){
+        p = 570;
     }
 
     educationElement.style.marginTop = (450-p) + "px";

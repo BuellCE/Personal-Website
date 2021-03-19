@@ -8,7 +8,6 @@
 }
 
 #topbar {
-    background: #0487AF !important;
     height: 50% !important;
 }
 
@@ -20,9 +19,6 @@
 @media screen and (max-width: 479px) {
     #topbar {
         display: none;
-    }
-    #navBar {
-        background-color: #0487AF !important;
     }
     #svgImg {
         background-color: white;
