@@ -13,12 +13,14 @@
     <script src="bootstrap/js/bootstrap.min.js"></script>
     <script src="Navbar.js"></script>
     <script> 
-
+        $( document ).ready(function() {
+            $("#header").load("header.html"); 
+        });
     </script>
 </head>
 
 <body>
-    <script src="header.html" rel="import" ></script>
+
     <div id="header"></div>
     
     <div style="background-image: linear-gradient(to right, #DDD, #0275d8); padding-top: 110px;">
