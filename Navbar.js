@@ -7,5 +7,5 @@ $(document).on("scroll", ()=>{
     $("#self-image").height(a);
 });
 
-    $("#header").load("header.html"); 
-    $("#footer").load("footer.html"); 
+$("#header").load("header.html"); 
+$("#footer").load("footer.html"); 

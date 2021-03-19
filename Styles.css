@@ -35,3 +35,6 @@
 .normal-font-size{
     font-size: 20px;
 }
+html {
+    scroll-behavior: smooth;
+}
