@@ -36,17 +36,17 @@
 
             <div class="d-flex justify-content-center my-2">
                 <p class="double-text-spacing text-center">
-                    <a href="#">Project Overview</a>
+                    <a href="#Project-Overview">Project Overview</a>
                     <br>
-                    <a href="#">Generating Planets</a>
+                    <a href="#Generating-Planets">Generating Planets</a>
                     <br>
-                    <a href="#">Applying Gravity and Movement</a>
+                    <a href="#Applying-Movement">Applying Gravity and Movement</a>
                     <br>
-                    <a href="#">Styling Environment</a>
+                    <a href="#Conclusion">Conclusion</a>
                 </p>
             </div>
 
-            <h4 class="text-center">
+            <h4 id="Project-Overview" class="text-center">
                 Project Overview
             </h4>
             <p>
@@ -64,7 +64,7 @@
                 required the most attention.
             </p>
 
-            <h4 class="text-center">
+            <h4 id="Generating-Planets" class="text-center">
                 Generating Planets
             </h4>
             <p>
@@ -79,7 +79,7 @@
                 <img class="d-block w-100 smooth-edges" src="assets/images/subdividedCube.jpg" style="max-width: 8in;" alt="Code snip">
             </div>
             <p>
-                It is clear that the surfaces near where the point of the cube existed are different than the rest of the surfaces. For this reason I took a different
+                It is clear that the surfaces where the corner of the cube existed are different than the rest of the surfaces. For this reason I took a different
                 approach. By applying the same steps we did above but to a icosahedron (a polyhedron with 20 faces), our shape will more closely resemble a sphere. The main
                 drawback to this approach is I would have to first generate a icosahedron, which isn't as simple as a cube. Below is an illustration of a icosahedron that has
                 been subdivided three times with all vertices being normalized.
@@ -88,7 +88,8 @@
                 <img class="d-block w-100 smooth-edges" src="assets/images/icosahedronSubdivide.jpg" style="max-width: 8in;" alt="Code snip">
             </div>
             <p>
-                Visually it's a big improvement over the normalized cube. While I made these shapes using Blender for testing, the shapes should turn out the same in Unity, so lets
+                Visually it's a big improvement over the normalized cube. The biggest noticeable different however, is the shape of the surfaces are now triangles rather than
+                quadrilaterals. While I made these shapes using Blender for testing, the shapes should turn out the same in Unity, so lets
                 start programming. In order to generate Unity objects, we must make a INSERT HERE!!! Below is the code to generate a icosahedron.
             </p>
             <p>
@@ -102,12 +103,116 @@
             </p>
             <p>
                 The last thing the shape of our planet needs is some random terrain such as hills or mountains. There are several ways to do this, however the most obvious
-                way is to add multiple layers of perlin noise (also called octaves). Perlin noise is an pseudo-random gradient of blacks and whites, and we can use this to represent
-                the height of our planet at any given point. A point of black would mean no elevation gain on the planet, while a point of white by contrast
-                means the elevation gain at that point is at a maximum.
+                way is to add multiple layers of perlin noise (also called octaves). Perlin noise is a pseudo-random gradient of blacks and whites, and we can use this to represent
+                the height of our planet at any given point. A point of pure black would mean no elevation gain on the planet, while a point of pure white by contrast
+                means the elevation gain at that point is at a maximum. Since perlin noise consists of gradients, we will get smooth transitions between blacks and whites (low
+                and high elevations) and our terrain should look smooth.
+            </p>
+            <div class="d-flex justify-content-center my-2">
+                <img class="d-block w-100 smooth-edges" src="assets/images/noise.jpg" style="max-width: 3in;" alt="Code snip">
+            </div>
+            <p>
+                Above is an example of the noise we will use. Imagine it represents the height of our planet, we can take a sample point of the noise, get the gradient
+                at that point as a value (black, white, or somewhere inbetween) and represent the value as a decimal between 0 and 1. We do this for several iterations
+                until we have fully looped over every vertex on our planet. Below is an example of how we will take our sample points from the noise.
+            </p>
+            <div class="d-flex justify-content-center my-2">
+                <img class="d-block w-100 smooth-edges" src="assets/images/noiseWithPoints.jpg" style="max-width: 3in;" alt="Code snip">
+            </div>
+            <p>
+                If we apply several noises to our planet, but have the sample points change in spacing for each, we get what's called octaves. We do this to have more
+                interesting terrain, and have the hills on our planet change in shape and size. Below is an example of two identical noises, but with different spacing between
+                our sample points. The more sample points we take for a given space, the smoother the hills we get. The first image could represent mountains in our terrain,
+                while the second could represent small hills.
+            </p>
+            <div class="d-flex justify-content-center my-2">
+                <img class="d-block w-100 smooth-edges" src="assets/images/noiseWithPoints.jpg" style="max-width: 3in;" alt="Code snip">
+                <img class="d-block w-100 smooth-edges ml-2" src="assets/images/noiseWithManyPoints.jpg" style="max-width: 3in;" alt="Code snip">
+            </div>
+            <p>
+                While 2d noise would work well for adding elevation to a 2d plane, our planets are represented as 3d objects. Therefore, we will need to use 3d noise. The
+                same principles apply, only now we are taking samples on all three dimensions, instead of just the two. We will add the perlin noise to our planets, and represent
+                the octaves as C# classes that we can modify in the Unity editor.
             </p>
             <p>
-                Perlin NOISE IMAGE HERE
+                CODE HERE
+            </p>
+            <p>
+                Now when we generate the planet we can get something like the following:
+            </p>
+            <div class="d-flex justify-content-center my-2">
+                <img class="d-block w-100 smooth-edges" src="assets/images/firstPlanet.jpg" style="max-width: 4in;" alt="Code snip">
+            </div>
+            <p>
+                While this works, it is important that we divide the planet up into several different objects, called chunks, to add performance benifits.
+                For now I will take the faces of our initial icosahedron, and have each of those faces represent chunks. Our single planet would then be
+                20 different objects. If we wanted even larger planets with simular sized chunks, we could have our chunks use the faces of our icosahedron immediately after the
+                first or second subdivision is applied. For now, our planet is fully generated and could easily be walked on by a character. Some simple styling could
+                also be applied.
+            </p>
+            <h4 id="Applying-Movement" class="text-center">
+                Applying Gravity and Movement
+            </h4>
+            <p>
+                With default Unity mechanics, gravity is applied to all objects in the negative Y-axis direction, so we will be turning it off entirely. We need
+                to get the direction of any given object to the center of the planet, and apply a force in that direction to that object. We know the position
+                of the center of the planet, and we know the position of the object within the 3d space. Since positions are represented as 3 floating points (one for each axis),
+                we can do some simple vector math to get the desired direction.
+            </p>
+            <div class="d-flex justify-content-center my-2">
+                <img class="d-block w-100 smooth-edges" src="assets/images/codeSnips/planetDirection.jpg" style="max-width: 8in;" alt="Code snip">
+            </div>
+            <p>
+                We can multiply this value by a gravitational strength and apply that as a force to our objects. The value of strength can be determined
+                by the distance an object is from the planet, and the mass of the planet which we can substitute for radius instead. Playing around with some
+                values and the following code does exactly what we want.
+            </p>
+            <div class="d-flex justify-content-center my-2">
+                <img class="d-block w-100 smooth-edges" src="assets/images/codeSnips/planetGravity.jpg" style="max-width: 8in;" alt="Code snip">
+            </div>
+            <p>
+                When the strength of the gravitational pull is too weak, we stop applying it altogether. This code will be called once every fixed update
+                by the engine.
+            </p>
+            <p>
+                Now that our character can fall towards the planet, the next step is to allow it to move around seemlessly. Since the character will move
+                around in a first-person perspective, our "forwards", "backwards", "left", and "right" directions are based on where our character is looking.
+                We can't move forwards by applying a force to the character in the same direction the character is looking, since the character would begin to fly
+                if they looked straight upwards. My solution was to take the <b>cross product</b> between the planet's normal direction, and the right facing direction
+                of the camera. The cross product is a vector that is orthogonal to
+                two other vectors. Using this, the output would be our desired forwards direction.
+            </p>
+            <div class="d-flex justify-content-center my-2">
+                <img class="d-block w-100 smooth-edges" src="assets/images/crossProduct.jpg" style="max-width: 3in;" alt="Code snip">
+            </div>
+            <p>
+                For backwards movement we do the same thing as forwards but with the left-facing direction of the camera. For left and right movement we take the 
+                forwards/backwards facing directions of the camera instead of the right/left directions
+            </p>
+            <div class="d-flex justify-content-center my-2">
+                <img class="d-block w-100 smooth-edges" src="assets/images/codeSnips/planetMovement.jpg" style="max-width: 8in;" alt="Code snip">
+            </div>
+            <p>
+                This does assume that our character is standing upright on the planet however. If we take the upwards direction of our character, and the planet's normal
+                direction, we can keep our character's rotation upright. Unity uses Quaternions to represent rotations since they are gimbal-lock free and can be modified
+                easily. Therefore we will need to translate the two 3-dimensional vectors into a Quaternion. The FromToRotation method creates a Quaternion based on the
+                "from direction" as it rotates towards the "to direction", which is exactly what we need.
+            </p>
+            <div class="d-flex justify-content-center my-2">
+                <img class="d-block w-100 smooth-edges" src="assets/images/codeSnips/planetForceAngle.jpg" style="max-width:7in;" alt="Code snip">
+            </div>
+            <p>
+                The transform.rotation is our characters rotation. We execute this code once every fixed update by the engine, and our character can 
+                will remain upright on the planet. We can now move around freely, perfect!
+            </p>
+            <h4 id="Conclusion" class="text-center">
+                Conclusion
+            </h4>
+            <p>
+                While I didn't cover every topic of this project, I touched base on the most complicated aspects. A lot of the code should be straight forwards to
+                someone who has used an engine like Unity before. I added some simple visual elements to the project, along with some simple extra movements such as a
+                jetpack. All of the project's c# scripts can be found on github
+                <a href="#">here</a>. A video demo of the project can be found below.
             </p>
         </div>
     </div>
