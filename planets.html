@@ -109,13 +109,17 @@
             <div class="d-flex justify-content-center my-2">
                 <img class="d-block w-100 smooth-edges" src="assets/images/codeSnips/subdivideMesh.jpg" style="max-width: 8in;" alt="Code snip">
             </div>
+            <p>
+                The MakeNewVertexBetweenTwoPoints() method takes in two vertices and returns a new vertex as the middle point. Once we have access to all six vertices (the three original
+                and the three new ones) we can create our four new triangles and disregard the old one.
+            </p>
             <h4 id="Adding-Terrain" class="text-center">
                 Adding Terrain
             </h4>
             <p>
                 The last thing the shape of our planet needs is some random terrain such as hills or mountains. There are several ways to do this, however the most obvious
-                way is to add multiple layers of perlin noise (also called octaves). Perlin noise is a pseudo-random gradient of blacks and whites, and we can use this to represent
-                the height of our planet at any given point. A point of pure black would mean no elevation gain on the planet, while a point of pure white by contrast
+                way is to add multiple layers of perlin noise (also called octaves). Perlin noise is a pseudo-random procedural gradient of blacks and whites, and we can use this to represent
+                the height of our planet at any given point. A point of pure black on the noise would mean no elevation gain on the planet, while a point of pure white by contrast
                 means the elevation gain at that point is at a maximum. Since perlin noise consists of gradients, we will get smooth transitions between blacks and whites (low
                 and high elevations) and our terrain should look smooth.
             </p>
@@ -133,8 +137,8 @@
             <p>
                 If we apply several noises to our planet, but have the sample points change in spacing for each, we get what's called octaves. We do this to have more
                 interesting terrain, and have the hills on our planet change in shape and size. Below is an example of two identical noises, but with different spacing between
-                our sample points. The more sample points we take for a given space, the smoother the hills we get. The first image could represent mountains in our terrain,
-                while the second could represent small hills.
+                our sample points. The more sample points we take for a given space, the smoother the hills we get. The first image could represent hills in our terrain,
+                while the second could represent mountains since the change in color (height) between the points is less drastic
             </p>
             <div class="d-flex justify-content-center my-2">
                 <img class="d-block w-100 smooth-edges" src="assets/images/noiseWithPoints.jpg" style="max-width: 3in;" alt="Code snip">
@@ -157,6 +161,7 @@
                 <img class="d-block w-100 smooth-edges" src="assets/images/codeSnips/perlinHeight.jpg" style="max-width: 8in;" alt="Code snip">
             </div>
             <p>
+                The Perlin3D method takes in an x, y, and z coordinate, and returns a value between 0 and 1 based on the color of the noise at that location.
                 When we apply four octaves of varrying noise spacing and height multipliers, we get an object like the following:
             </p>
             <div class="d-flex justify-content-center my-2">
