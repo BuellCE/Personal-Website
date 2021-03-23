@@ -40,6 +40,8 @@
                     <br>
                     <a href="#Generating-Planets">Generating Planets</a>
                     <br>
+                    <a href="#Adding-Terrain">Adding Terrain</a>
+                    <br>
                     <a href="#Applying-Movement">Applying Gravity and Movement</a>
                     <br>
                     <a href="#Conclusion">Conclusion</a>
@@ -89,18 +91,27 @@
             </div>
             <p>
                 Visually it's a big improvement over the normalized cube. The biggest noticeable different however, is the shape of the surfaces are now triangles rather than
-                quadrilaterals. While I made these shapes using Blender for testing, the shapes should turn out the same in Unity, so lets
-                start programming. In order to generate Unity objects, we must make a INSERT HERE!!! Below is the code to generate a icosahedron.
+                quadrilaterals. While I made these shapes using Blender for testing, the shapes should turn out the same in Unity.
             </p>
             <p>
-                Icosahedron CODE HERE!
+                Once we have our icosahedron, which can be imported as a 3d model (or created using code), we then need to subdivide it several times by adding a new vertex between 
+                each two set of vertices. We do this by looping over every triangle in our planet, and adding a new vertex at the middle of each line. 
+                Each triangle has 3 vertices and 3 lines, so we will make 3 new vertices for each triangle.
             </p>
+            <div class="d-flex justify-content-center my-2">
+                <img class="d-block w-100 smooth-edges" src="assets/images/triangles.jpg" style="max-width: 3in;" alt="Code snip">
+            </div>
             <p>
-                Next we need to subdivide the icosahedron, ensuring all vertices on the surface of the icosahedron are the same distance from the center.
+                The above image shows the vertices of the original triangle in red. During the subdivision process we will create new vertices, shown as the blue circles, and join
+                them together (represented by the green lines). This will turn our original one triangle into four. Below is the subdivision code that takes a list of triangles 
+                (all triangles on our planet) and loops over them, subdividing each as represented above.
             </p>
-            <p>
-                Subdivide CODE HERE!
-            </p>
+            <div class="d-flex justify-content-center my-2">
+                <img class="d-block w-100 smooth-edges" src="assets/images/codeSnips/subdivideMesh.jpg" style="max-width: 8in;" alt="Code snip">
+            </div>
+            <h4 id="Adding-Terrain" class="text-center">
+                Adding Terrain
+            </h4>
             <p>
                 The last thing the shape of our planet needs is some random terrain such as hills or mountains. There are several ways to do this, however the most obvious
                 way is to add multiple layers of perlin noise (also called octaves). Perlin noise is a pseudo-random gradient of blacks and whites, and we can use this to represent
@@ -112,7 +123,7 @@
                 <img class="d-block w-100 smooth-edges" src="assets/images/noise.jpg" style="max-width: 3in;" alt="Code snip">
             </div>
             <p>
-                Above is an example of the noise we will use. Imagine it represents the height of our planet, we can take a sample point of the noise, get the gradient
+                The image above is an example of the noise we will use. Imagine it represents the height of our planet, we can take a sample point of the noise, get the gradient
                 at that point as a value (black, white, or somewhere inbetween) and represent the value as a decimal between 0 and 1. We do this for several iterations
                 until we have fully looped over every vertex on our planet. Below is an example of how we will take our sample points from the noise.
             </p>
@@ -132,13 +143,21 @@
             <p>
                 While 2d noise would work well for adding elevation to a 2d plane, our planets are represented as 3d objects. Therefore, we will need to use 3d noise. The
                 same principles apply, only now we are taking samples on all three dimensions, instead of just the two. We will add the perlin noise to our planets, and represent
-                the octaves as C# classes that we can modify in the Unity editor.
+                the octaves as C# classes that we can modify in the Unity editor. Below is the code used to add height to our vertices based on the octaves.
             </p>
+            <div class="d-flex justify-content-center my-2">
+                <img class="d-block w-100 smooth-edges" src="assets/images/codeSnips/perlinNoise.jpg" style="max-width: 7in;" alt="Code snip">
+            </div>
             <p>
-                CODE HERE
+                The GetHeight method takes in the position of the vertex and returns a float to be used as a multiplier. The TerrainNoise3D class contains
+                two variables, a height multiplier, and a noise spacing. Using these variables, the GetHeight method can now function like described in the perlin
+                noise images above.
             </p>
+            <div class="d-flex justify-content-center my-2">
+                <img class="d-block w-100 smooth-edges" src="assets/images/codeSnips/perlinHeight.jpg" style="max-width: 8in;" alt="Code snip">
+            </div>
             <p>
-                Now when we generate the planet we can get something like the following:
+                When we apply four octaves of varrying noise spacing and height multipliers, we get an object like the following:
             </p>
             <div class="d-flex justify-content-center my-2">
                 <img class="d-block w-100 smooth-edges" src="assets/images/firstPlanet.jpg" style="max-width: 4in;" alt="Code snip">
@@ -146,9 +165,8 @@
             <p>
                 While this works, it is important that we divide the planet up into several different objects, called chunks, to add performance benifits.
                 For now I will take the faces of our initial icosahedron, and have each of those faces represent chunks. Our single planet would then be
-                20 different objects. If we wanted even larger planets with simular sized chunks, we could have our chunks use the faces of our icosahedron immediately after the
-                first or second subdivision is applied. For now, our planet is fully generated and could easily be walked on by a character. Some simple styling could
-                also be applied.
+                20 different smaller objects. If we wanted even larger planets with simular sized chunks, we could have our chunks use the faces of our icosahedron immediately after the
+                first or second subdivision is applied. For now, our planet is fully generated and could easily be walked on by a character, which is the goal.
             </p>
             <h4 id="Applying-Movement" class="text-center">
                 Applying Gravity and Movement
@@ -202,7 +220,7 @@
                 <img class="d-block w-100 smooth-edges" src="assets/images/codeSnips/planetForceAngle.jpg" style="max-width:7in;" alt="Code snip">
             </div>
             <p>
-                The transform.rotation is our characters rotation. We execute this code once every fixed update by the engine, and our character can 
+                The transform.rotation is our characters rotation. We execute this code once every fixed update by the engine, and our character
                 will remain upright on the planet. We can now move around freely, perfect!
             </p>
             <h4 id="Conclusion" class="text-center">
@@ -212,11 +230,10 @@
                 While I didn't cover every topic of this project, I touched base on the most complicated aspects. A lot of the code should be straight forwards to
                 someone who has used an engine like Unity before. I added some simple visual elements to the project, along with some simple extra movements such as a
                 jetpack. All of the project's c# scripts can be found on github
-                <a href="#">here</a>. A video demo of the project can be found below.
+                <a href="#">here</a>. A video demo of the project can be found below. Thanks for reading.
             </p>
         </div>
     </div>
-
 
     <div id="footer"></div>
 

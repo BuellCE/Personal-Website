@@ -16,6 +16,13 @@
     -1px 1px 0 #FFF,
     1px 1px 0 #FFF; 
 }
+.bordered-text-black{
+    text-shadow:
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+    1px 1px 0 #000; 
+}
 #university-background{
     background-image: url("assets/images/universityBackground.jpg");
     background-repeat: no-repeat;
