@@ -56,8 +56,8 @@
             <p>
                 While the game sounds simple on paper, there are a variety of complications required to pull it off. The maze, for example, needs to be
                 randomly generated, and all open areas need to be connected such that there are no closed off spaces inaccessible to the player. Furthermore,
-                this map needs to be rendered into a 2d image in order to show the player the layout of the maze. Perhaps the most difficult task is to have
-                the cops navigate around the maze without getting hung up on obstacles. When the cop spots the player, they will begin to chase the player until they are caught.
+                this map needs to be rendered into a 2d image in order to show the player the layout of the maze. The cops will also need to navigate around 
+                the maze without getting hung up on obstacles. When the cop spots the player, they will begin to chase the player until they are caught.
                 This means the artificial intelligence will need to be able to find the shortest route from their position to the player's position at any given moment, and update
                 this route in realtime. These difficulties will be the main focus of discussion for this project.
             </p>
@@ -73,11 +73,11 @@
                 <img class="d-block w-100 smooth-edges" src="assets/images/noise.jpg" style="max-width: 3in;" alt="Code snip">
             </div>
             <p>
-                We can take samples of the perlin noise and evaluate them. If a given sample is brighter than a specified threshold, we can make it open space. Otherwise
-                we place a wall at the corresponding location. The higher the threshold of brightness, the more solid walls that will generate, and the less open our maze will be.
+                We can take samples of the perlin noise and evaluate them. If a given sample is brighter than a specified threshold, we can represent it as open space. If
+                the sample is less than the threshold, we represent it as a solid wall. The higher the threshold of brightness, the more solid walls that will generate, and the less open our maze will be.
                 If we set this threshold to about 50% we should have about half of the grid generate as walls with the other half being open space. If we grab samples from the
-                perlin noise, having each sample relatively close to eachother, we should have a map with long corridors and a minimum amount of closed off rooms. The last important
-                aspect is to increase the wall spawning threshold for areas of the grid closer to the border of our maze. Doing this will allow walls to spawn around the 
+                perlin noise, having each sample relatively close to eachother, we should have a map with long corridors and a minimum amount of closed off rooms. We can also
+                increase the brightness threshold for tiles on the grid that are close to the border of the maze. Doing this will allow walls to spawn around the 
                 map in a way that looks more fluent than a 1-block thick border.
             </p>
             <p>
@@ -96,8 +96,8 @@
             </div>
             <list>
                 <li>Red areas are chunks of open space that we want to connect by removing the walls that separate them.</li>
-                <li>The dark blue area is the main border of the map, and consists entirely of walls</li>
-                <li>Lighter blue areas are walls that are inside our open area.</li>
+                <li>The dark blue area is the main border of the map, and consists entirely of walls.</li>
+                <li>Lighter blue areas are walls that are disconnected to the border.</li>
                 <li>Green areas are chunks of open space that are too small to open up. They will need to be replaced with walls.</li>
             </list>
             <p>
@@ -118,11 +118,12 @@
                 For this example, lets represent walls with the black squares, and our starting tile as the red square. The algorithm evaluates this example in the following manner:
                 <list>
                     <li>The red square is evaluated as an open-space tile, so we add it to the list. It then adds all adjacent tiles to a queue (all blue squares).</li>
-                    <li>Tile two is taken from the queue and evaluated as an open space tile, so we add it to the list with the red tile. It then adds all it's adjacent tiles to the queue (all green squares).</li>
-                    <li>Tile 3 is the next in the queue so we evaluate it. It's an open-tile square so we add it to the list, and add all it's adjacent tiles to the queue (the purple tiles).</li>
+                    <li>Tile 2 is taken from the queue so we add it to the list with the red tile. It then adds all it's adjacent tiles to the queue (all green squares).</li>
+                    <li>Tile 3 is the next in the queue so we add it to the list and add all it's adjacent tiles to the queue (the purple tiles).</li>
                     <li>This continues with tile 4, it adds the orange tiles 11 & 12 to the queue.</li>
                     <li>This continues with tile 5, it adds the cyan tile 13 to the queue.</li>
-                    <li>The green tile 6 is evaluated next and added to the list, however it has no adjacent tiles of the same type, so it adds nothing to the queue.</li>
+                    <li>The green tile 6 is evaluated next and added to the list, however it has no adjacent tiles of the same type since black squares are walls, not open spaces.
+                    </li>
                     <li>Tile 7 is able to add the yellow tile 14 to the queue.</li>
                 </list>
             </p>
@@ -146,7 +147,7 @@
                 <img class="d-block w-100 smooth-edges" src="assets/images/mazeMapConnected.jpg" style="max-width: 3.5in;" alt="Code snip">
             </div>
             <p>
-                When that the closest areas are identified it becomes the simple process of removing wall tiles in order to open the areas up to eachother. Our maze,
+                When the closest areas are identified, it becomes the simple process of removing the wall tiles between them in order to open the areas up to eachother. Our maze,
                 now complete, looks like the following:
             </p>
             <div class="d-flex justify-content-center my-2">
@@ -154,12 +155,22 @@
             </div>
             <p>
                 The last task for the maze is to spawn in an end goal. The end goal should always be the furthest distance away from where the player starts.
+                The player will always spawn at the bottom left of the maze, so we need to find the tile furthest away from that location.
                 In order to find the furthest distance, we can apply the queue-block algorithm used previously but have the starting tile be the player's start
-                location. We evaluate tiles until the queue is empty, and use the last tile from the queue as the end goal, since it will be the farthest away
-                from the player. The following image is the maze with the player's start location (green), with the end location (red).
+                location. We evaluate tiles until the queue is empty, and use the last tile from the queue as the end goal. The following image is the maze 
+                with the player's start location (green), with the end location (red).
             </p>
             <div class="d-flex justify-content-center my-2">
                 <img class="d-block w-100 smooth-edges" src="assets/images/finishedMaze.jpg" style="max-width: 3.5in;" alt="Code snip">
+            </div>
+            <p>
+                Now that the maze is mapped out, it is possible to physically generate within the 3d space. I added a plane for the ground, and cubes for the walls. The grid
+                up to this point has been a 2d array of integers with the numbers corresponding to either an open-spaced tile or a wall. Therefore the maze
+                can be physically generated by looping over the 2d array and spawning in walls where necessary. The image below shows the generated maze in 3d form
+                within the Unity editor.
+            </p>
+            <div class="d-flex justify-content-center my-2">
+                <img class="d-block w-100 smooth-edges" src="assets/images/physicalMaze.jpg" style="max-width: 8in;" alt="Code snip">
             </div>
             <h4 id="AI" class="text-center">
                 Artificial Intelligence
@@ -174,11 +185,10 @@
                 </list>
             </p>
             <p>
-                Since the cop can be broken down into states that drastically affect their behavior, I will use the state design pattern to process the cop's
-                behavior.
+                Since the cop can be broken down into states that drastically affect their behavior, I will use the state design pattern to process the cop.
             </p>
             <p>
-                The patrol state will work by choosing a random location in the maze, and having the cop move to that location. Once there the cop will look around
+                The patrol state will work by choosing a random location in the maze, and having the cop move to that location. Once there, the cop will look around
                 and then choose a new location. This process will repeat unless the state is changed by either hearing the player run nearby (move to investigating state)
                 or the player is spotted withing the cop's flashlight (move to chasing state).
             </p>
@@ -200,11 +210,20 @@
             <p>
                 In order for the cop to navigate through the maze, we will need to setup the Unity Engine's navigation mesh (navmesh) which will represent the area of the maze that 
                 the cops can move around. This mesh will be almost identical to the area of our maze that can be walked on by the player.
-                In simple terms to setup a navmesh, we must first identify a walking space (floor) and navigation obstacles (walls). Our walls will have the "Nav Mesh Obstacle"
-                component added to them, which will be used to identify where the navmesh should be cut. With the obstacles place on the floor we can bake the navmesh to the ground.
-                Our cops, when given the "Nav Mesh Agent" component, will now be able to navigate from any location on the navmesh to any new location on the navmesh. The
-                movement will be handled separately.
+                In simple terms, to setup a navmesh, we must first identify a walking space (floor) and navigation obstacles (walls). Our walls will have the "Nav Mesh Obstacle"
+                component added to them, which will be used to identify where the navmesh should be cut. With the obstacles placed on the floor, we can bake the navmesh to the ground.
+                Our cops, when given the "Nav Mesh Agent" component, will now be able to navigate from any location on the navmesh to any new location on the navmesh. The navigation
+                system in Unity allows us to specify a new location on the navmesh, and the system will tell us the exact positions the AI will need to move to in order to make
+                it to the specified end location.
             </p>
+            <p>
+                The image below shows the cop location in red, and the destination location in purple. Each blue dot represents a location that the cop will need to move to
+                before reaching it's goal. In this example, the navigation system will tell us the location of all blue dots, and we can use this to have the cops path a 
+                line from it's current location to each blue dot. When reached, we tell the cop to move to the next blue dot, until eventually it hits the destination.
+            </p>
+            <div class="d-flex justify-content-center my-2">
+                <img class="d-block w-100 smooth-edges" src="assets/images/mazeNavigation.jpg" style="max-width: 4.5in;" alt="Code snip">
+            </div>
             <h4 id="Conclusion" class="text-center">
                 Conclusion
             </h4>
@@ -216,15 +235,10 @@
             </p>
             <p>
                 The source code can be found on github 
-                <a href="#">here</a>
-            </p>
-            <p>
-                This game is also fully playable and can be downloaded
-                <a href="#">here</a>
+                <a href="https://github.com/BuellCE/SneakGame">here</a>
             </p>
         </div>
     </div>
-
 
     <div id="footer"></div>
 
