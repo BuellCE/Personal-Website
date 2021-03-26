@@ -3,8 +3,8 @@ $(document).on("scroll", ()=>{
 });
 
 $(document).ready(function() {
-    $("#header").load("header.html"); 
-    $("#footer").load("footer.html");
+    $("#header").load("universal/header.html"); 
+    $("#footer").load("universal/footer.html");
     resizeTopBar(); 
 });
 
